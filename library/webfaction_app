@@ -1,0 +1,93 @@
+#! /usr/bin/python
+# Create webfaction application
+# Valid application types can be found by adding check_types
+# to the arguments or by looking here:
+# http://docs.webfaction.com/xmlrpc-api/apps.html#application-types
+
+import xmlrpclib
+from ansible.module_utils.basic import *
+
+webfaction = xmlrpclib.ServerProxy('https://api.webfaction.com/')
+
+def main():
+
+    module = AnsibleModule(
+        argument_spec = dict(
+            name = dict(required=True, default=None),
+            state = dict(required=False, default='present'),
+            type = dict(required=True),
+            autostart = dict(required=False, choices=BOOLEANS, default='false'),
+            extra_info = dict(required=False, default=""),
+            port_open = dict(required=False, default="false"),
+            login_name = dict(required=True),
+            login_passwd = dict(required=True),
+        ),
+        supports_check_mode=True
+    )
+    app_name  = module.params['name']
+    app_type = module.params['type']
+    app_state = module.params['state']
+
+    session_id, account = webfaction.login(
+        module.params['login_name'],
+        module.params['login_passwd']
+    )
+
+    app_list = webfaction.list_apps(session_id)
+    app_map = dict([(i['name'], i) for i in app_list])
+    existing_app = app_map.get(app_name)
+
+    result = {}
+    
+    # Here's where the real stuff happens
+
+    if app_state == 'present':
+
+        # Does an app with this name already exist?
+        if existing_app:
+            if existing_app['type'] != app_type:
+                module.fail_json(msg="App already exists with different type. Please fix by hand.")
+
+            # If it exists with the right type, we don't change it
+            # Should check other parameters.
+            module.exit_json(
+                changed = False,
+            )
+
+        if not module.check_mode:
+            # If this isn't a dry run, create the app
+            result.update(
+                webfaction.create_app(
+                    session_id, app_name, app_type, 
+                    module.boolean(module.params['autostart']), 
+                    module.params['extra_info'],
+                    module.boolean(module.params['port_open'])
+                )
+            )
+
+    elif app_state == 'absent':
+
+        # If the app's already not there, nothing changed.
+        if not existing_app:
+            module.exit_json(
+                changed = False,
+            )
+
+        if not module.check_mode:
+            # If this isn't a dry run, delete the app
+            result.update(
+                webfaction.delete_app(session_id, app_name)
+            )
+
+    else:
+        module.fail_json(msg="Unknown state specified: {}".format(app_state))
+
+
+    module.exit_json(
+        changed = True,
+        result = result
+    )
+
+# The conventional ending
+main()
+

@@ -1,0 +1,99 @@
+#! /usr/bin/python
+# Create webfaction website
+
+import socket
+import xmlrpclib
+from ansible.module_utils.basic import *
+
+webfaction = xmlrpclib.ServerProxy('https://api.webfaction.com/')
+
+def main():
+
+    module = AnsibleModule(
+        argument_spec = dict(
+            name = dict(required=True, default=None),
+            state = dict(required=False, default='present'),
+            # You can specify an IP address or hostname.
+            host = dict(required=True, default=None),
+            https = dict(required=False, choices=BOOLEANS, default='false'),
+            subdomains = dict(required=False, default=[]),
+            site_apps = dict(required=False, default=[]),
+            login_name = dict(required=True),
+            login_passwd = dict(required=True),
+        ),
+        supports_check_mode=True
+    )
+    site_name  = module.params['name']
+    site_state = module.params['state']
+    site_host = module.params['host']
+    site_ip = socket.gethostbyname(site_host)
+
+    session_id, account = webfaction.login(
+        module.params['login_name'],
+        module.params['login_passwd']
+    )
+
+    site_list = webfaction.list_websites(session_id)
+    site_map = dict([(i['name'], i) for i in site_list])
+    existing_site = site_map.get(site_name)
+
+    result = {}
+    
+    # Here's where the real stuff happens
+
+    if site_state == 'present':
+
+        # Does an app with this name already exist?
+        if existing_site:
+            # Yes, but on a different host - fail
+            if existing_site['ip'] != site_ip:
+                module.fail_json(msg="Website already exists with different type. Please fix by hand.")
+
+            # If it exists with the right I{, we don't change anything.
+            # Should check other parameters.
+            module.exit_json(
+                changed = False,
+            )
+
+        positional_args = [ 
+            session_id, site_name, site_ip, 
+            module.boolean(module.params['https']),
+            module.params['subdomains'],
+        ]
+        for a in module.params['site_apps']:
+            positional_args.append( (a[0], a[1]) )
+
+        if not module.check_mode:
+            # If this isn't a dry run, create the app
+            # print positional_args
+            result.update(
+                webfaction.create_website(
+                    *positional_args
+                )
+            )
+
+    elif site_state == 'absent':
+
+        # If the app's already not there, nothing changed.
+        if not existing_site:
+            module.exit_json(
+                changed = False,
+            )
+
+        if not module.check_mode:
+            # If this isn't a dry run, delete the app
+            result.update(
+                webfaction.delete_website(session_id, site_name, site_ip)
+            )
+
+    else:
+        module.fail_json(msg="Unknown state specified: {}".format(site_state))
+
+    module.exit_json(
+        changed = True,
+        result = result
+    )
+
+# The conventional ending
+main()
+

@@ -2,7 +2,7 @@
 
 This is a starting point for some Ansible modules for provisioning domains, apps, and websites on Webfaction, using the [Webfaction API](http://docs.webfaction.com/xmlrpc-api/).
 
-NOTE: THE MODULES HAVE NOT BEEN EXTENSIVELY TESTED. USE THEM WITH CAUTION! And please help improve them!
+NOTE: THE MODULES HAVE NOT BEEN EXTENSIVELY TESTED. USE THEM WITH CAUTION! And there are many ways in which they could be improved, so please help! All suggestions welcome.
 
 
 ## Background
@@ -52,8 +52,9 @@ This is what the above steps might then look like in a playbook:
 
 
       # Yes, sadly, you do need to know your webfaction hostname
-      # for the following. But at least you don't need to know the
-      # IP address - we'll convert that for you.
+      # for the 'host' parameter in the following. 
+      # But at least you don't need to know the IP address - 
+      # we'll convert the hostname for you.
 
       - name: Create a website
         webfaction_site:
@@ -73,9 +74,9 @@ If this all runs smoothly, you should end up with a directory called `webapps/te
 
 ## Some Notes
 
-You can run these on a local machine, or on a webfaction host, or elsewhere, since the scripts use the remote webfaction API - the location is not important.  Running them on multiple hosts simultaneously is almost certainly a Bad Idea, though!
+You can run these on a local machine, or on a Webfaction host, or elsewhere, since the scripts use the remote webfaction API - the location is not important.  Running them on multiple hosts simultaneously is almost certainly a Bad Idea, though! So if you don't specify 'localhost', you may want to add `serial: 1`.
 
-If you are *deleting* domains, by using `state=absent`, then if you specify subdomains, those particular subdomains will be deleted.  If you don't, the domain will be deleted.
+If you are *deleting* domains, by using `state=absent`, then note that if you specify subdomains, those particular subdomains will be deleted.  If you don't, the domain will be deleted.
 
 These come with no warranties, use them at your own risk, etc, but I hope someone may find them useful!
 

@@ -50,6 +50,16 @@ Once you've done that, this is what the above steps might look like in a playboo
           login_name: "{{webfaction_user}}"
           login_passwd: "{{webfaction_passwd}}"
 
+      # This will also create a default DB user with the same
+      # name as the database, and the specified password.
+      
+      - name: Create a database
+        webfaction_db:
+          name: "{{webfaction_user}}_db1"
+          password: mytestsql
+          type: mysql
+          login_name: "{{webfaction_user}}"
+          login_passwd: "{{webfaction_passwd}}"
 
       # Yes, sadly, you do need to know your webfaction hostname
       # for the 'host' parameter in the following. 

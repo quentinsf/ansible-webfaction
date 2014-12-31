@@ -38,7 +38,7 @@ Once you've done that, this is what the above steps might look like in a playboo
           state=present
           type=mod_wsgi35-python27  # See below
           login_name={{webfaction_user}}
-          login_passwd={{webfaction_passwd}}
+          login_password={{webfaction_passwd}}
 
 
       - name: Create a domain
@@ -48,7 +48,7 @@ Once you've done that, this is what the above steps might look like in a playboo
           subdomains:
             - testsite1
           login_name: "{{webfaction_user}}"
-          login_passwd: "{{webfaction_passwd}}"
+          login_password: "{{webfaction_passwd}}"
 
       # This will also create a default DB user with the same
       # name as the database, and the specified password.
@@ -59,7 +59,7 @@ Once you've done that, this is what the above steps might look like in a playboo
           password: mytestsql
           type: mysql
           login_name: "{{webfaction_user}}"
-          login_passwd: "{{webfaction_passwd}}"
+          login_password: "{{webfaction_passwd}}"
 
       # Yes, sadly, you do need to know your webfaction hostname
       # for the 'host' parameter in the following. 
@@ -77,7 +77,7 @@ Once you've done that, this is what the above steps might look like in a playboo
             - ['testapp1', '/']
           https: no
           login_name: "{{webfaction_user}}"
-          login_passwd: "{{webfaction_passwd}}"
+          login_password: "{{webfaction_passwd}}"
     
 
 If this all runs smoothly, you should end up with a directory called `webapps/testapp1` in your home directory on webfaction, and Webfaction will be set up, in this case, to run a WSGI app there.  See the [Webfaction docs](http://docs.webfaction.com/xmlrpc-api/apps.html#application-types) for all the different types of apps that can be configured.

@@ -17,7 +17,7 @@ def main():
             type = dict(required=True, default=None),
             password = dict(required=False, default=None),
             login_name = dict(required=True),
-            login_passwd = dict(required=True),
+            login_password = dict(required=True),
         ),
         supports_check_mode=True
     )
@@ -28,7 +28,7 @@ def main():
 
     session_id, account = webfaction.login(
         module.params['login_name'],
-        module.params['login_passwd']
+        module.params['login_password']
     )
 
     db_list = webfaction.list_dbs(session_id)

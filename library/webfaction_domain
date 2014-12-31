@@ -16,7 +16,7 @@ def main():
             # You can specify an IP address or hostname.
             subdomains = dict(required=False, default=[]),
             login_name = dict(required=True),
-            login_passwd = dict(required=True),
+            login_password = dict(required=True),
         ),
         supports_check_mode=True
     )
@@ -26,7 +26,7 @@ def main():
 
     session_id, account = webfaction.login(
         module.params['login_name'],
-        module.params['login_passwd']
+        module.params['login_password']
     )
 
     domain_list = webfaction.list_domains(session_id)

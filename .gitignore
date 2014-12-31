@@ -52,3 +52,7 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Using this for testing - don't want to upload:
+site.yml
+

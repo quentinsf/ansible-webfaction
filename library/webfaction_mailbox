@@ -1,0 +1,67 @@
+#! /usr/bin/python
+# Create webfaction mailbox
+
+import socket
+import xmlrpclib
+from ansible.module_utils.basic import *
+
+webfaction = xmlrpclib.ServerProxy('https://api.webfaction.com/')
+
+def main():
+
+    module = AnsibleModule(
+        argument_spec=dict(
+            mailbox_name=dict(required=True, default=None),
+            mailbox_password=dict(required=True),
+            state=dict(required=False, default='present'),
+            login_name=dict(required=True),
+            login_password=dict(required=True),
+        ),
+        supports_check_mode=True
+    )
+
+    mailbox_name = module.params['mailbox_name']
+    site_state = module.params['state']
+
+    session_id, account = webfaction.login(
+        module.params['login_name'],
+        module.params['login_password']
+    )
+
+    mailbox_list = webfaction.list_mailboxes(session_id)
+    existing_mailbox = mailbox_name in mailbox_list
+
+    result = {}
+    
+    # Here's where the real stuff happens
+
+    if site_state == 'present':
+
+        # Does a mailbox with this name already exist?
+        if existing_mailbox:
+            module.exit_json(changed=False,)
+
+        positional_args = [session_id, mailbox_name]
+
+        if not module.check_mode:
+            # If this isn't a dry run, create the mailbox
+            result.update(webfaction.create_mailbox(*positional_args))
+
+    elif site_state == 'absent':
+
+        # If the mailbox is already not there, nothing changed.
+        if not existing_mailbox:
+            module.exit_json(changed=False)
+
+        if not module.check_mode:
+            # If this isn't a dry run, delete the mailbox
+            result.update(webfaction.delete_mailbox(session_id, mailbox_name))
+
+    else:
+        module.fail_json(msg="Unknown state specified: {}".format(site_state))
+
+    module.exit_json(changed=True, result=result)
+
+# The conventional ending
+main()
+

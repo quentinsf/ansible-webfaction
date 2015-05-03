@@ -43,14 +43,14 @@ def main():
 
     if site_state == 'present':
 
-        # Does an app with this name already exist?
+        # Does a site with this name already exist?
         if existing_site:
             # Yes, but on a different host - fail
             if existing_site['ip'] != site_ip:
-                module.fail_json(msg="Website already exists with different type. Please fix by hand.")
+                module.fail_json(msg="Website already exists with a different IP address. Please fix by hand.")
 
-            # If it exists with the right I{, we don't change anything.
-            # Should check other parameters.
+            # If it exists with the right IP, we don't change anything.
+            # We should check other parameters.
             module.exit_json(
                 changed = False,
             )
@@ -64,7 +64,7 @@ def main():
             positional_args.append( (a[0], a[1]) )
 
         if not module.check_mode:
-            # If this isn't a dry run, create the app
+            # If this isn't a dry run, create the site
             # print positional_args
             result.update(
                 webfaction.create_website(
@@ -74,14 +74,14 @@ def main():
 
     elif site_state == 'absent':
 
-        # If the app's already not there, nothing changed.
+        # If the site's already not there, nothing changed.
         if not existing_site:
             module.exit_json(
                 changed = False,
             )
 
         if not module.check_mode:
-            # If this isn't a dry run, delete the app
+            # If this isn't a dry run, delete the site
             result.update(
                 webfaction.delete_website(session_id, site_name, site_ip)
             )

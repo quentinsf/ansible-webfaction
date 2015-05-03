@@ -70,7 +70,7 @@ Once you've done that, this is what the above steps might look like in a playboo
         webfaction_site:
           name: testsite1
           state: present
-          host: web431.webfaction.com 
+          host: web4321.webfaction.com 
           subdomains: 
             - 'testsite1.my_domain.org'
           site_apps:
@@ -92,5 +92,5 @@ You can then use other Ansible modules to put stuff in place within that directo
 
 These come with no warranties, use them at your own risk, etc, but I hope someone may find them useful!
 
-[Quentin Stafford-Fraser](http://qandr.org/quentin)
+[Quentin Stafford-Fraser](http://quentinsf.com)
 

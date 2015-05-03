@@ -1,5 +1,85 @@
 #! /usr/bin/python
-# Create webfaction website
+# Create Webfaction website using Ansible and the Webfaction API
+#
+# Quentin Stafford-Fraser 2015
+
+DOCUMENTATION = '''
+---
+module: webfaction_site
+short_description: Add or remove a website on a Webfaction host
+description:
+    - Add or remove a website on a Webfaction host.  Further documentation at http://github.com/quentinsf/ansible-webfaction.
+author: Quentin Stafford-Fraser
+version_added: 1.99
+notes:
+    - Sadly, you I(do) need to know your webfaction hostname for the C(host) parameter.  But at least, unlike the API, you don't need to know the IP address - you can use a DNS name.
+    - If a site of the same name exists in the account but on a different host, the operation will exit.
+    - "You can run playbooks that use this on a local machine, or on a Webfaction host, or elsewhere, since the scripts use the remote webfaction API - the location is not important. However, running them on multiple hosts I(simultaneously) is best avoided. If you don't specify I(localhost) as your host, you may want to add C(serial: 1) to the plays."
+    - See `the webfaction API <http://docs.webfaction.com/xmlrpc-api/>`_ for more info.
+
+options:
+
+    name:
+        description:
+            - The name of the website
+        required: true
+        default: null
+
+    state:
+        description:
+            - Whether the website should exist
+        required: false
+        choices: ['present', 'absent']
+        default: "present"
+            
+    host:
+        description:
+            - The webfaction host on which the site should be created.
+        required: true
+
+    https:
+        description:
+            - Whether or not to use HTTPS
+        required: false
+        choices: BOOLEANS 
+        default: 'false'
+
+    site_apps:
+        description:
+            - A mapping of URLs to apps
+        required: false
+
+    subdomains:
+        description:
+            - A list of subdomains associated with this site.
+        required: false
+        default: null
+
+    login_name:
+        description:
+            - The webfaction account to use
+        required: true
+
+    login_password:
+        description:
+            - The webfaction password to use
+        required: true
+'''
+
+EXAMPLES = '''
+  - name: create website
+    webfaction_site:
+      name: testsite1
+      state: present
+      host: myhost.webfaction.com 
+      subdomains: 
+        - 'testsite1.my_domain.org'
+      site_apps:
+        - ['testapp1', '/']
+      https: no
+      login_name: "{{webfaction_user}}"
+      login_password: "{{webfaction_passwd}}"
+'''
 
 import socket
 import xmlrpclib
@@ -56,7 +136,7 @@ def main():
                 module.fail_json(msg="Website already exists with a different IP address. Please fix by hand.")
 
             # If it's on this host and the key parameters are the same, nothing needs to be done.
-            
+
             if (existing_site['https'] == module.boolean(module.params['https'])) and \
                (set(existing_site['subdomains']) == set(module.params['subdomains'])) and \
                (dict(existing_site['website_apps']) == dict(module.params['site_apps'])):

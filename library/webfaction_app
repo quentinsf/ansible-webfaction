@@ -1,8 +1,68 @@
 #! /usr/bin/python
-# Create webfaction application
-# Valid application types can be found by adding check_types
-# to the arguments or by looking here:
+# Create a Webfaction application using Ansible and the Webfaction API
+#
+# Valid application types can be found by looking here:
 # http://docs.webfaction.com/xmlrpc-api/apps.html#application-types
+#
+# Quentin Stafford-Fraser 2015
+
+DOCUMENTATION = '''
+---
+module: webfaction_app
+short_description: Add or remove applications on a Webfaction host
+description:
+    - Add or remove applications on a Webfaction host.  Further documentation at http://github.com/quentinsf/ansible-webfaction.
+author: Quentin Stafford-Fraser
+version_added: 1.99
+notes:
+    - "You can run playbooks that use this on a local machine, or on a Webfaction host, or elsewhere, since the scripts use the remote webfaction API - the location is not important. However, running them on multiple hosts I(simultaneously) is best avoided. If you don't specify I(localhost) as your host, you may want to add C(serial: 1) to the plays."
+    - See `the webfaction API <http://docs.webfaction.com/xmlrpc-api/>`_ for more info.
+
+options:
+    name:
+        description:
+            - The name of the application
+        required: true
+        default: null
+
+    state:
+        description:
+            - Whether the application should exist
+        required: false
+        choices: ['present', 'absent']
+        default: "present"
+
+    type:
+        description:
+            - The type of application to create. See the Webfaction docs at http://docs.webfaction.com/xmlrpc-api/apps.html for a list.
+        required: true
+
+    autostart:
+        description:
+            - Whether the app should restart with an autostart.cgi script
+        required: false
+        default: "no"
+
+    extra_info:
+        description:
+            - Any extra parameters required by the app
+        required: false
+        default: null
+
+    open_port:
+        required: false
+        default: false
+
+    login_name:
+        description:
+            - The webfaction account to use
+        required: true
+
+    login_password:
+        description:
+            - The webfaction password to use
+        required: true
+'''
 
 import xmlrpclib
 from ansible.module_utils.basic import *

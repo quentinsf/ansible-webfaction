@@ -1,5 +1,48 @@
 #! /usr/bin/python
-# Create webfaction mailbox
+# Create webfaction mailbox using Ansible and the Webfaction API
+
+DOCUMENTATION = '''
+---
+module: webfaction_mailbox
+short_description: Add or remove mailboxes on Webfaction
+description:
+    - Add or remove mailboxes on a Webfaction account. Further documentation at http://github.com/quentinsf/ansible-webfaction.
+author: Quentin Stafford-Fraser
+version_added: 1.99
+notes:
+    - "You can run playbooks that use this on a local machine, or on a Webfaction host, or elsewhere, since the scripts use the remote webfaction API - the location is not important. However, running them on multiple hosts I(simultaneously) is best avoided. If you don't specify I(localhost) as your host, you may want to add C(serial: 1) to the plays."
+    - See `the webfaction API <http://docs.webfaction.com/xmlrpc-api/>`_ for more info.
+options:
+
+    mailbox_name:
+        description:
+            - The name of the mailbox
+        required: true
+        default: null
+
+    mailbox_password:
+        description:
+            - The password for the mailbox
+        required: true
+        default: null
+
+    state:
+        description:
+            - Whether the mailbox should exist
+        required: false
+        choices: ['present', 'absent']
+        default: "present"
+
+    login_name:
+        description:
+            - The webfaction account to use
+        required: true
+
+    login_password:
+        description:
+            - The webfaction password to use
+        required: true
+'''
 
 import socket
 import xmlrpclib

@@ -1,5 +1,7 @@
 #! /usr/bin/python
 # Create webfaction mailbox using Ansible and the Webfaction API
+#
+# Quentin Stafford-Fraser and Andy Baker 2015
 
 DOCUMENTATION = '''
 ---

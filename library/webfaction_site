@@ -43,17 +43,19 @@ def main():
 
     if site_state == 'present':
 
-        # Does a site with this name already exist?
         if existing_site:
-            # Yes, but on a different host - fail
+
+            # If it's on a different IP address, then fail.
             if existing_site['ip'] != site_ip:
                 module.fail_json(msg="Website already exists with a different IP address. Please fix by hand.")
 
-            # If it exists with the right IP, we don't change anything.
-            # We should check other parameters.
-            module.exit_json(
-                changed = False,
-            )
+            # If the key parameters are the same, nothing needs to be done.
+            if (existing_site['https'] == module.boolean(module.params['https'])) and \
+               (set(existing_site['subdomains']) == set(module.params['subdomains'])) and \
+               (dict(existing_site['website_apps']) == dict(module.params['site_apps'])):
+                module.exit_json(
+                    changed = False
+                )
 
         positional_args = [ 
             session_id, site_name, site_ip, 
@@ -64,12 +66,13 @@ def main():
             positional_args.append( (a[0], a[1]) )
 
         if not module.check_mode:
-            # If this isn't a dry run, create the site
-            # print positional_args
+            # If this isn't a dry run, create or modify the site
             result.update(
-                webfaction.create_website(
-                    *positional_args
-                )
+                    webfaction.create_website(
+                        *positional_args
+                    ) if not existing_site else webfaction.update_website (
+                        *positional_args
+                    )
             )
 
     elif site_state == 'absent':

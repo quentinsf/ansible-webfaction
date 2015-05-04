@@ -22,7 +22,6 @@ options:
         description:
             - The name of the domain
         required: true
-        default: null
 
     state:
         description:

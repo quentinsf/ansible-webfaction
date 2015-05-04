@@ -20,7 +20,6 @@ options:
         description:
             - The name of the database
         required: true
-        default: null
 
     state:
         description:
@@ -61,7 +60,6 @@ EXAMPLES = '''
 
 import socket
 import xmlrpclib
-from ansible.module_utils.basic import *
 
 webfaction = xmlrpclib.ServerProxy('https://api.webfaction.com/')
 
@@ -69,10 +67,10 @@ def main():
 
     module = AnsibleModule(
         argument_spec = dict(
-            name = dict(required=True, default=None),
+            name = dict(required=True),
             state = dict(required=False, default='present'),
             # You can specify an IP address or hostname.
-            type = dict(required=True, default=None),
+            type = dict(required=True),
             password = dict(required=False, default=None),
             login_name = dict(required=True),
             login_password = dict(required=True),
@@ -142,6 +140,6 @@ def main():
         result = result
     )
 
-# The conventional ending
+from ansible.module_utils.basic import *
 main()
 

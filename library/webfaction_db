@@ -90,6 +90,10 @@ def main():
     db_list = webfaction.list_dbs(session_id)
     db_map = dict([(i['name'], i) for i in db_list])
     existing_db = db_map.get(db_name)
+    
+    user_list = webfaction.list_db_users(session_id)
+    user_map = dict([(i['username'], i) for i in user_list])
+    existing_user = user_map.get(db_name)
 
     result = {}
     
@@ -120,17 +124,23 @@ def main():
 
     elif db_state == 'absent':
 
-        # If the app's already not there, nothing changed.
-        if not existing_db:
-            module.exit_json(
-                changed = False,
-            )
-
         if not module.check_mode:
-            # If this isn't a dry run, delete the app
-            result.update(
-                webfaction.delete_db(session_id, db_name, db_type)
-            )
+            
+            if not (existing_user or existing_user):
+                module.exit_json(changed = False,)
+                
+            if existing_db:
+                if not module.check_mode:
+                    # If this isn't a dry run, delete the db
+                    result.update(
+                        webfaction.delete_db(session_id, db_name, db_type)
+                    )
+                    
+            if existing_user:
+                    # If this isn't a dry run, delete the user
+                    result.update(
+                        webfaction.delete_db_user(session_id, db_name, db_type)
+                    )
 
     else:
         module.fail_json(msg="Unknown state specified: {}".format(db_state))

@@ -1,7 +1,7 @@
 #! /usr/bin/python
 # Create webfaction database using Ansible and the Webfaction API
 #
-# Quentin Stafford-Fraser 2015
+# Quentin Stafford-Fraser and Andy Baker 2015
 
 DOCUMENTATION = '''
 ---
@@ -56,6 +56,10 @@ EXAMPLES = '''
       type: mysql
       login_name: "{{webfaction_user}}"
       login_password: "{{webfaction_passwd}}"
+
+  # Note that, for symmetry's sake, deleting a database using
+  # 'state: absent' will also delete the matching user.
+  
 '''
 
 import socket
@@ -101,7 +105,7 @@ def main():
 
     if db_state == 'present':
 
-        # Does an app with this name already exist?
+        # Does a database with this name already exist?
         if existing_db:
             # Yes, but of a different type - fail
             if existing_db['db_type'] != db_type:
@@ -114,7 +118,7 @@ def main():
 
 
         if not module.check_mode:
-            # If this isn't a dry run, create the app
+            # If this isn't a dry run, create the database
             # print positional_args
             result.update(
                 webfaction.create_db(
@@ -126,7 +130,7 @@ def main():
 
         if not module.check_mode:
             
-            if not (existing_user or existing_user):
+            if not (existing_user or existing_db):
                 module.exit_json(changed = False,)
                 
             if existing_db:

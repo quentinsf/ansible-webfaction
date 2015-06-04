@@ -34,6 +34,12 @@ options:
         required: true
         choices: ['mysql', 'postgresql']
 
+    password:
+        description:
+            - The password for the new database user.
+        required: false
+        default: None
+
     login_name:
         description:
             - The webfaction account to use

@@ -43,6 +43,11 @@ options:
         description:
             - The webfaction password to use
         required: true
+
+    machine:
+        description:
+            - The machine name to use (optional for accounts with only one machine)
+        required: false
 '''
 
 EXAMPLES = '''
@@ -56,6 +61,7 @@ EXAMPLES = '''
       type: mysql
       login_name: "{{webfaction_user}}"
       login_password: "{{webfaction_passwd}}"
+      machine={{webfaction_machine}}
 '''
 
 import socket
@@ -74,6 +80,7 @@ def main():
             password = dict(required=False, default=None),
             login_name = dict(required=True),
             login_password = dict(required=True),
+            machine = dict(required=False, default=False),
         ),
         supports_check_mode=True
     )
@@ -82,10 +89,17 @@ def main():
     db_type  = module.params['type']
     db_passwd = module.params['password']
 
-    session_id, account = webfaction.login(
-        module.params['login_name'],
-        module.params['login_password']
-    )
+    if module.params['machine']:
+        session_id, account = webfaction.login(
+            module.params['login_name'],
+            module.params['login_password'],
+            module.params['machine']
+        )
+    else:
+        session_id, account = webfaction.login(
+            module.params['login_name'],
+            module.params['login_password']
+        )
 
     db_list = webfaction.list_dbs(session_id)
     db_map = dict([(i['name'], i) for i in db_list])

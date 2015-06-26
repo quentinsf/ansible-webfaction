@@ -2,7 +2,7 @@
 
 This is a starting point for some Ansible modules for provisioning domains, apps, and websites on Webfaction, using the [Webfaction API](http://docs.webfaction.com/xmlrpc-api/).
 
-NOTE: THE MODULES HAVE NOT BEEN EXTENSIVELY TESTED. USE THEM WITH CAUTION! And there are many ways in which they could be improved, so please help! All suggestions welcome.
+NOTE: These modules have now been contributed to the ansible-extras repository, so should be included with Ansible 2.0 onwards.
 
 
 ## Background

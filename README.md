@@ -1,8 +1,8 @@
 # Webfaction tools for Ansible
 
-This is a starting point for some Ansible modules for provisioning domains, apps, and websites on Webfaction, using the [Webfaction API](http://docs.webfaction.com/xmlrpc-api/).
+**NOTE: These modules have now been contributed to [the ansible-modules-extras repository](https://github.com/ansible/ansible-modules-extras), so should be included with Ansible 2.0 onwards.  Please submit any pull requests there, since this repository will eventually be discarded.**
 
-NOTE: These modules have now been contributed to the ansible-extras repository, so should be included with Ansible 2.0 onwards.
+This is a starting point for some Ansible modules for provisioning domains, apps, and websites on Webfaction, using the [Webfaction API](http://docs.webfaction.com/xmlrpc-api/).
 
 
 ## Background

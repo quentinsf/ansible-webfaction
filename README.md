@@ -1,19 +1,21 @@
 # Webfaction tools for Ansible
 
-**NOTE: These modules have now been contributed to [the ansible-modules-extras repository](https://github.com/ansible/ansible-modules-extras), so should be included with Ansible 2.0 onwards.  Please submit any pull requests there, since this repository will eventually be discarded.**
+**NOTE: These modules have now been contributed to [the ansible-modules-extras repository](https://github.com/ansible/ansible-modules-extras), so should be included with Ansible 2.0 onwards.  Please submit any pull requests for code changes there. Once Ansible 2 is released, this repository may be retained only as a documentation page.**
 
 This is a starting point for some Ansible modules for provisioning domains, apps, and websites on Webfaction, using the [Webfaction API](http://docs.webfaction.com/xmlrpc-api/).
 
 
 ## Background
 
-On Webfaction, to bring up a working web application, you need to start by doing three things:
+On Webfaction, to bring up a working web application, you need to start by doing three or four things:
 
-1. Create an application based on one of their templates, and give it a name. e.g. 'my_wordpress'.  This sets up the environment needed to run it in a directory within your `webapps` directory.
+1. Create an **application** based on one of their templates, and give it a name. e.g. 'my_wordpress'.  This sets up the environment needed to run it in a directory within your `webapps` directory.
 
-2. Create a domain and optional subdomains. e.g. 'mywebsite.com' and 'www'.  This tells the web servers to respond to these domains, once you've set your DNS service to point the domains at the correct machine.
+2. Create a **domain** and optional subdomains. e.g. 'mywebsite.com' and 'www'.  This tells the web servers to respond to these domains, once you've set your DNS service to point the domains at the correct machine.
 
-3. Create a website, which connects these together. It requires a name, a domain and optional subdomains, and a list of applications and the bits of the URL space that they should serve - e.g. ('my_wordpress', '/')
+3. Create a **website**, which connects these together. It requires a name, a domain and optional subdomains, and a list of applications and the bits of the URL space that they should serve - e.g. ('my_wordpress', '/')
+
+4. You may also need to create a **database** if your application depends on one.  Many of the standard templates will create one for you automatically, though.
 
 Remember that using Webfaction is not quite like provisioning things on blank machines or VMs.  In particular, you won't be able to use sudo, and your directory layout will be somewhat constrained.  Having said that, it is an amazingly flexible service for very little financial outlay, and the guys who run it know what they're doing.  But this isn't a place for a Webfaction tutorial; I'll assume you're familiar with the concepts.
 

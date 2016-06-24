@@ -1,6 +1,6 @@
 # Webfaction tools for Ansible
 
-**NOTE: These modules are included with Ansible 2.0 onwards.  This repository is retained only as a documentation page.**
+**NOTE: These modules are now [included with Ansible 2.0 onwards](http://docs.ansible.com/ansible/list_of_cloud_modules.html#webfaction).  This repository is retained only as a documentation page.**
 
 This is a starting point for some Ansible modules for provisioning domains, apps, and websites on Webfaction, using the [Webfaction API](http://docs.webfaction.com/xmlrpc-api/).
 
@@ -22,9 +22,7 @@ Remember that using Webfaction is not quite like provisioning things on blank ma
 
 ## A simple example
 
-To use these modules, which you can find in the 'library' folder (webfaction_app, webfaction_domain etc), put them in a directory called 'library' at the same level as your top-level playbooks.  See [the Ansible docs](http://docs.ansible.com/developing_modules.html) for more information.
-
-Once you've done that, this is what the above steps might look like in a playbook:
+This is what the commands might look like in a playbook:
 
     ---
     - hosts: localhost
